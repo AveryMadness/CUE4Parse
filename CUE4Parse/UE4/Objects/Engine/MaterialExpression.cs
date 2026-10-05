@@ -128,7 +128,10 @@ public class FExpressionInput : IUStruct
         MaskG = Ar.Read<int>();
         MaskB = Ar.Read<int>();
         MaskA = Ar.Read<int>();
-        ExpressionName = Ar is { Game: < GAME_UE5_2, IsFilterEditorOnly: true } ? Ar.ReadFName() : (Expression ?? new FPackageIndex()).Name.SubstringAfterLast('/');
+        // 5.2 dropped the cooked ExpressionName in favour of the Expression reference; a title cooked
+        // off a main-branch engine between 5.1 and 5.2 (Fortnite 23.x) already writes it that way,
+        // so this is a version option rather than a game check
+        ExpressionName = Ar.IsFilterEditorOnly && Ar.Versions["ExpressionInput.HasExpressionName"] ? Ar.ReadFName() : (Expression ?? new FPackageIndex()).Name.SubstringAfterLast('/');
     }
 
     public virtual void WriteAdditionalProperties(JsonWriter writer, JsonSerializer serializer) { }

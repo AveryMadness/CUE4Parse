@@ -34,7 +34,10 @@ namespace CUE4Parse.UE4.Assets.Exports.StaticMesh
         {
             Bounds = Ar.Game != GAME_Highguard ? new FBox(Ar) : Ar.Read<FBox>();
             MaxLodLevel = Ar.Game < GAME_UE5_1 || Ar.Game== GAME_WorldofJadeDynasty ? Ar.Read<int>() : 0;
-            bMostlyTwoSided = Ar.Game >= GAME_UE5_2 && Ar.ReadBoolean();
+            // Added to the Lumen card build data between 5.1 and 5.2; titles cooked off a main-branch
+            // engine between the two (Fortnite 23.x) carry it under a 5.1 package version, so it is
+            // a version option rather than a game check
+            bMostlyTwoSided = Ar.Versions["StaticMesh.HasCardMostlyTwoSided"] && Ar.ReadBoolean();
             CardBuildData = Ar.ReadArray(() => new FLumenCardBuildData(Ar));
         }
     }
